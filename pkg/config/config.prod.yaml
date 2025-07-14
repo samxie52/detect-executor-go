@@ -1,0 +1,53 @@
+server:
+  host: "0.0.0.0"
+  port: 8080
+  read_timeout: "30s"
+  write_timeout: "30s"
+  idle_timeout: "120s"
+
+database:
+  host: "${DETECT_DATABASE_HOST}"
+  port: 3306
+  username: "${DETECT_DATABASE_USERNAME}"
+  password: "${DETECT_DATABASE_PASSWORD}"
+  database: "${DETECT_DATABASE_DATABASE}"
+  charset: "utf8mb4"
+  max_idle_conns: 20
+  max_open_conns: 200
+  conn_max_lifetime: "1h"
+
+redis:
+  host: "${DETECT_REDIS_HOST}"
+  port: 6379
+  password: "${DETECT_REDIS_PASSWORD}"
+  db: 0
+  pool_size: 50
+  min_idle_conns: 10
+  dial_timeout: "5s"
+  read_timeout: "3s"
+  write_timeout: "3s"
+
+detect:
+  max_workers: 1000
+  batch_size: 100
+  queue_size: 10000
+  timeout: "60s"
+  retry_count: 3
+  retry_delay: "2s"
+  cpp_engine_url: "${DETECT_CPP_ENGINE_URL}"
+  video_stream_url: "${DETECT_VIDEO_STREAM_URL}"
+
+log:
+  level: "info"
+  format: "json"
+  output: "file"
+  filename: "/var/log/detect-executor-go/app.log"
+  max_size: 500
+  max_age: 30
+  max_backups: 30
+  compress: true
+
+metrics:
+  enabled: true
+  path: "/metrics"
+  port: 9090
