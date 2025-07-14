@@ -1,0 +1,45 @@
+# 二进制文件
+/detect-executor-go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# 测试二进制文件
+*.test
+
+# 输出目录
+/bin/
+/dist/
+
+# 依赖目录
+/vendor/
+
+# Go workspace file
+go.work
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 日志文件
+*.log
+
+# 配置文件（敏感信息）
+configs/config.local.yaml
+
+# 临时文件
+/tmp/
