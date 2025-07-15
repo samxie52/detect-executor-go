@@ -17,6 +17,7 @@ type Config struct {
 
 // ServerConfig HTTP Server configuration
 type ServerConfig struct {
+	Mode         string        `yaml:"mode" mapstructure:"mode"`
 	Host         string        `yaml:"host" mapstructure:"host"`
 	Port         int           `yaml:"port" mapstructure:"port"`
 	ReadTimeout  time.Duration `yaml:"read_timeout" mapstructure:"read_timeout"`

@@ -36,6 +36,7 @@ ehthumbs.db
 Thumbs.db
 
 # 日志文件
+/logs/
 *.log
 
 # 配置文件（敏感信息）
