@@ -45,7 +45,9 @@ func NewManager(config *Config, log *logger.Logger) (*Manager, error) {
 			return nil, fmt.Errorf("failed to initialize MySQL: %w ", err)
 		}
 		manager.MySQL = mysqlClient
-		log.Info("MySQL connection established")
+		if log != nil {
+			log.Info("MySQL connection established")
+		}
 	}
 
 	// initialize Redis
@@ -55,7 +57,9 @@ func NewManager(config *Config, log *logger.Logger) (*Manager, error) {
 			return nil, fmt.Errorf("failed to initialize Redis: %w ", err)
 		}
 		manager.Redis = redisClient
-		log.Info("Redis connection established")
+		if log != nil {
+			log.Info("Redis connection established")
+		}
 	}
 
 	return manager, nil
@@ -126,6 +130,16 @@ func (m *Manager) Close() error {
 	m.logger.Info("All database connections closed")
 
 	return nil
+}
+
+// GetMySQL
+func (m *Manager) GetMySQL() *MySQLClient {
+	return m.MySQL
+}
+
+// GetRedis
+func (m *Manager) GetRedis() *RedisClient {
+	return m.Redis
 }
 
 func (m *Manager) StartHealthCheckRoutine(ctx context.Context, interval time.Duration) {
