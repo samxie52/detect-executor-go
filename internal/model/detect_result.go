@@ -8,9 +8,9 @@ import (
 type DetectResult struct {
 	BaseModel
 
-	ResultID string     `gorm:"uniqueIndex;size:36:not null" json:"result_id" validate:"required"`
-	TaskID   string     `gorm:"index;size:36:not null" json:"task_id" validate:"required"`
-	DeviceID string     `gorm:"index;size:64:not null" json:"device_id" validate:"required"`
+	ResultID string     `gorm:"uniqueIndex;size:36;not null" json:"result_id" validate:"required"`
+	TaskID   string     `gorm:"index;size:36;not null" json:"task_id" validate:"required"`
+	DeviceID string     `gorm:"index;size:64;not null" json:"device_id" validate:"required"`
 	Type     DetectType `gorm:"size:32;not null" json:"type"`
 
 	//分数 5位小数 type:decimal(5,4) 中 5 表示总位数，4 表示小数位数
@@ -29,7 +29,8 @@ type DetectResult struct {
 
 	//外键关联 foreignKey:TaskID 表示外键是 TaskID references:TaskID 表示引用的表是 TaskID
 	//json:"task,omitempty" 表示在序列化时，如果 Task 为空，不序列化
-	Task *DetectTask `gorm:"foreignKey:TaskID;references:TaskID" json:"task,omitempty"`
+	// 临时移除外键约束以避免表创建顺序问题
+	// Task *DetectTask `gorm:"foreignKey:TaskID;references:TaskID" json:"task,omitempty"`
 }
 
 // TableName 指定表名, gorm 会自动将结构体名转换为蛇形命名, 例如 DetectResult -> detect_result

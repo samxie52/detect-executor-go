@@ -31,7 +31,8 @@ type Device struct {
 	Config json.RawMessage `gorm:"type:json" json:"config"`
 
 	//外键关联 foreignKey:DeviceID 表示外键是 DeviceID references:DeviceID 表示引用的表是 DeviceID
-	Tasks []DetectTask `gorm:"foreignKey:DeviceID;references:DeviceID" json:"tasks,omitempty"`
+	// 临时移除外键约束以避免表创建顺序问题
+	// Tasks []DetectTask `gorm:"foreignKey:DeviceID;references:DeviceID" json:"tasks,omitempty"`
 }
 
 // TableName 指定表名, gorm 会自动将结构体名转换为蛇形命名, 例如 Device -> device

@@ -12,8 +12,8 @@ type DetectTask struct {
 	BaseModel
 	//uniqueIndex 表示该字段是唯一索引，size:36 表示该字段的长度为36，not null 表示该字段不能为空
 	// validate:required 表示该字段不能为空
-	TaskID     string     `gorm:"uniqueIndex;size:36:not null" json:"task_id" validate:"required"`
-	DeviceID   string     `gorm:"index;size:64:not null" json:"device_id" validate:"required"`
+	TaskID     string     `gorm:"uniqueIndex;size:36;not null" json:"task_id" validate:"required"`
+	DeviceID   string     `gorm:"index;size:64;not null" json:"device_id" validate:"required"`
 	DeviceName string     `gorm:"size:168" json:"device_name"`
 	Type       DetectType `gorm:"size:32;not null" json:"type" validate:"required,oneof=quality integrity motion object"`
 	Status     TaskStatus `gorm:"size:32;not null default=pending" json:"status" validate:"required,oneof=pending running success failed cancel timeout"`
@@ -37,7 +37,8 @@ type DetectTask struct {
 	ResultID string `gorm:"size:36" json:"result_id"`
 	ErrorMsg string `gorm:"size:1024" json:"error_msg"`
 
-	Result []DetectResult `gorm:"foreignKey:TaskID;references:TaskID" json:"result,omitempty"`
+	// 临时移除外键约束以避免表创建顺序问题
+	// Result []DetectResult `gorm:"foreignKey:TaskID;references:TaskID" json:"result,omitempty"`
 }
 
 // TableName 指定表名, gorm 会自动将结构体名转换为蛇形命名, 例如 DetectTask -> detect_task
