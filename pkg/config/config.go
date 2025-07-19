@@ -13,6 +13,48 @@ type Config struct {
 	Detect   DetectConfig   `yaml:"detect" mapstructure:"detect"`
 	Log      LogConfig      `yaml:"log" mapstructure:"log"`
 	Metrics  MetricsConfig  `yaml:"metrics" mapstructure:"metrics"`
+	Client   ClientConfig   `yaml:"client" mapstructure:"client"`
+}
+
+// ClientConfig 客户端配置
+type ClientConfig struct {
+	HTTP         HTTPClientConfig   `yaml:"http" mapstructure:"http"`
+	DetectEngine DetectEngineConfig `yaml:"detect_engine" mapstructure:"detect_engine"`
+	Storage      StorageConfig      `yaml:"storage" mapstructure:"storage"`
+	MessageQueue MessageQueueConfig `yaml:"message_queue" mapstructure:"message_queue"`
+}
+
+// HTTPClientConfig HTTP 客户端配置
+type HTTPClientConfig struct {
+	Timeout         time.Duration `mapstructure:"timeout"`
+	RetryCount      int           `mapstructure:"retry_count"`
+	RetryInterval   time.Duration `mapstructure:"retry_interval"`
+	MaxIdleConns    int           `mapstructure:"max_idle_conns"`
+	MaxConnsPerHost int           `mapstructure:"max_conns_per_host"`
+}
+
+// DetectEngineConfig 检测引擎配置
+type DetectEngineConfig struct {
+	BaseURL string           `mapstructure:"base_url"`
+	APIKey  string           `mapstructure:"api_key"`
+	Client  HTTPClientConfig `mapstructure:"client"`
+}
+
+// StorageConfig 存储配置
+type StorageConfig struct {
+	Endpoint        string `mapstructure:"endpoint"`
+	AccessKeyID     string `mapstructure:"access_key_id"`
+	SecretAccessKey string `mapstructure:"secret_access_key"`
+	UseSSL          bool   `mapstructure:"use_ssl"`
+	Region          string `mapstructure:"region"`
+}
+
+// MessageQueueConfig 消息队列配置
+type MessageQueueConfig struct {
+	URL              string        `mapstructure:"url"`
+	ReconnectDelay   time.Duration `mapstructure:"reconnect_delay"`
+	Heartbeat        time.Duration `mapstructure:"heartbeat"`
+	ConnectionNumber int           `mapstructure:"connection_number"`
 }
 
 // ServerConfig HTTP Server configuration

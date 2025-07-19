@@ -1,0 +1,31 @@
+# 外部客户端配置
+client:
+  http:
+    timeout: 30s
+    retry_count: 3
+    retry_interval: 1s
+    max_idle_conns: 100
+    max_conns_per_host: 10
+  
+  detect_engine:
+    base_url: "http://192.168.5.16:8081"
+    api_key: "your-api-key"
+    client:
+      timeout: 60s
+      retry_count: 3
+      retry_interval: 2s
+      max_idle_conns: 50
+      max_conns_per_host: 5
+  
+  storage:
+    endpoint: "192.168.5.16:9000"
+    access_key_id: "minioadmin"
+    secret_access_key: "minioadmin"
+    use_ssl: false
+    region: "us-east-1"
+  
+  message_queue:
+    url: "amqp://guest:guest@192.168.5.16:5672/"
+    reconnect_delay: 5s
+    heartbeat: 30s
+    connection_name: "detect-executor"
