@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"detect-executor-go/pkg/config"
 	"fmt"
 	"sync"
 )
@@ -21,17 +22,10 @@ type Manager struct {
 
 // Config 客户端配置
 type Config struct {
-	HTTP         ClientConfig
-	DetectEngine DetectEngineConfig
-	Storage      StorageConfig
-	MessageQueue MessageQueueConfig
-}
-
-// DetectEngineConfig 检测引擎配置
-type DetectEngineConfig struct {
-	BaseURL string
-	APIKey  string
-	Client  ClientConfig
+	HTTP         config.HTTPClientConfig
+	DetectEngine config.DetectEngineConfig
+	Storage      config.StorageConfig
+	MessageQueue config.MessageQueueConfig
 }
 
 func NewManager(config *Config) (*Manager, error) {

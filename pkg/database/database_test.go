@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"detect-executor-go/pkg/config"
 	"detect-executor-go/pkg/logger"
 	"testing"
 
@@ -9,16 +10,15 @@ import (
 )
 
 func TestMySQLConnection(t *testing.T) {
-	config := &MySQLConfig{
-		Host:            "localhost",
+	config := &config.DatabaseConfig{
+		Host:            "192.168.5.16",
 		Port:            3306,
 		Username:        "root",
-		Password:        "password",
+		Password:        "root123",
 		Database:        "test",
 		Charset:         "utf8mb4",
 		MaxOpenConns:    10,
 		MaxIdleConns:    10,
-		ConnMaxIdleTime: 600,
 		ConnMaxLifetime: 3600,
 	}
 
@@ -36,11 +36,11 @@ func TestMySQLConnection(t *testing.T) {
 }
 
 func TestRedisConnection(t *testing.T) {
-	config := &RedisConfig{
-		Host:         "localhost",
+	config := &config.RedisConfig{
+		Host:         "192.168.5.16",
 		Port:         6379,
 		Password:     "",
-		Database:     0,
+		DB:           0,
 		PoolSize:     10,
 		MinIdleConns: 5,
 		DialTimeout:  5,
@@ -73,8 +73,8 @@ func TestDatabaseManager(t *testing.T) {
 	log, err := logger.NewLogger(loggerConfig)
 	assert.NoError(t, err)
 
-	config := &Config{
-		MySQL: &MySQLConfig{
+	databaseConfig := &Config{
+		MySQL: &config.DatabaseConfig{
 			Host:            "localhost",
 			Port:            3306,
 			Username:        "root",
@@ -83,14 +83,13 @@ func TestDatabaseManager(t *testing.T) {
 			Charset:         "utf8mb4",
 			MaxOpenConns:    10,
 			MaxIdleConns:    10,
-			ConnMaxIdleTime: 600,
 			ConnMaxLifetime: 3600,
 		},
-		Redis: &RedisConfig{
+		Redis: &config.RedisConfig{
 			Host:         "localhost",
 			Port:         6379,
 			Password:     "",
-			Database:     0,
+			DB:           0,
 			PoolSize:     10,
 			MinIdleConns: 5,
 			DialTimeout:  5,
@@ -99,7 +98,7 @@ func TestDatabaseManager(t *testing.T) {
 		},
 	}
 
-	manager, err := NewManager(config, log)
+	manager, err := NewManager(databaseConfig, log)
 	if err != nil {
 		t.Skip("Database not available, skipping test")
 		return

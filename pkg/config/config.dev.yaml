@@ -6,18 +6,18 @@ server:
   idle_timeout: "60s"
 
 database:
-  host: "${DETECT_DB_HOST:localhost}"
+  host: "${DETECT_DB_HOST:192.168.5.16}"
   port: ${DETECT_DB_PORT:3306}
   username: "${DETECT_DB_USER:root}"
-  password: "${DETECT_DB_PASSWORD:password}"
-  database: "${DETECT_DB_NAME:detect_db_dev}"
+  password: "${DETECT_DB_PASSWORD:root123}"
+  database: "${DETECT_DB_NAME:detect_executor}"
   charset: "utf8mb4"
   max_idle_conns: 10
   max_open_conns: 100
   conn_max_lifetime: "1h"
 
 redis:
-  host: "${DETECT_REDIS_HOST:localhost}"
+  host: "${DETECT_REDIS_HOST:192.168.6.16}"
   port: ${DETECT_REDIS_PORT:6379}
   password: "${DETECT_REDIS_PASSWORD:}"
   db: ${DETECT_REDIS_DB:0}

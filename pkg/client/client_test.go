@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"detect-executor-go/pkg/config"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -30,7 +31,7 @@ func (suite *ClientTestSuite) TestHTTPClient() {
 	}))
 	defer server.Close()
 
-	client := NewHTTPClient(DefaultClientConfig)
+	client := NewHTTPClient(config.DefaultHTTPClientConfig)
 
 	resp, err := client.Get(suite.ctx, server.URL, nil)
 	suite.NoError(err)
@@ -59,7 +60,7 @@ func (suite *ClientTestSuite) TestDetectEngineClient() {
 	}))
 	defer server.Close()
 
-	client := NewDetectEngineClient(server.URL, "test-key", DefaultClientConfig)
+	client := NewDetectEngineClient(server.URL, "test-key", config.DefaultHTTPClientConfig)
 
 	err := client.Ping(suite.ctx)
 	suite.NoError(err)
@@ -79,25 +80,25 @@ func (suite *ClientTestSuite) TestDetectEngineClient() {
 
 func (suite *ClientTestSuite) TestClientManager() {
 	config := &Config{
-		HTTP: ClientConfig{
+		HTTP: config.HTTPClientConfig{
 			Timeout:       10 * time.Second,
 			RetryCount:    3,
 			RetryInterval: 1 * time.Second,
 		},
-		DetectEngine: DetectEngineConfig{
+		DetectEngine: config.DetectEngineConfig{
 			BaseURL: "http://localhost:8080",
 			APIKey:  "test-key",
-			Client: ClientConfig{
+			Client: config.HTTPClientConfig{
 				Timeout: 10 * time.Second,
 			},
 		},
-		Storage: StorageConfig{
+		Storage: config.StorageConfig{
 			Endpoint:  "localhost:9000",
 			AccessKey: "test-key",
 			SecretKey: "test-key",
 			UseSSL:    false,
 		},
-		MessageQueue: MessageQueueConfig{
+		MessageQueue: config.MessageQueueConfig{
 			URL: "amqp://guest:guest@localhost:5672/",
 		},
 	}

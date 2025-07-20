@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"detect-executor-go/pkg/config"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -27,23 +28,10 @@ type MessageHandler func(ctx context.Context, message []byte) error
 type messageQueueClient struct {
 	conn    *amqp.Connection
 	channel *amqp.Channel
-	config  MessageQueueConfig
+	config  config.MessageQueueConfig
 }
 
-// MessageQueueConfig 消息队列配置
-type MessageQueueConfig struct {
-	// RabbitMQ 服务器地址
-	URL string
-
-	// 重连延迟时间
-	ReconnectDelay time.Duration
-	// 心跳时间
-	Heartbeat time.Duration
-	// 连接名称
-	ConnectionName string
-}
-
-func NewMessageQueueClient(config MessageQueueConfig) (MessageQueueClient, error) {
+func NewMessageQueueClient(config config.MessageQueueConfig) (MessageQueueClient, error) {
 	conn, err := amqp.Dial(config.URL)
 
 	if err != nil {

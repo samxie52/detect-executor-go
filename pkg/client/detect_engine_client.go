@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"detect-executor-go/internal/model"
+	"detect-executor-go/pkg/config"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -61,7 +62,7 @@ type detectEngineClient struct {
 }
 
 // NewDetectEngineClient 创建检测引擎客户端
-func NewDetectEngineClient(baseURL, apiKey string, config ClientConfig) DetectEngineClient {
+func NewDetectEngineClient(baseURL, apiKey string, config config.HTTPClientConfig) DetectEngineClient {
 	return &detectEngineClient{
 		httpClient: NewHTTPClient(config),
 		baseURL:    baseURL,

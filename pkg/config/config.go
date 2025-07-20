@@ -33,6 +33,15 @@ type HTTPClientConfig struct {
 	MaxConnsPerHost int           `mapstructure:"max_conns_per_host"`
 }
 
+// DefaultHTTPClientConfig 默认 HTTP 客户端配置
+var DefaultHTTPClientConfig = HTTPClientConfig{
+	Timeout:         time.Second * 30,
+	RetryCount:      3,
+	RetryInterval:   time.Second * 1,
+	MaxIdleConns:    100,
+	MaxConnsPerHost: 10,
+}
+
 // DetectEngineConfig 检测引擎配置
 type DetectEngineConfig struct {
 	BaseURL string           `mapstructure:"base_url"`
@@ -42,19 +51,30 @@ type DetectEngineConfig struct {
 
 // StorageConfig 存储配置
 type StorageConfig struct {
-	Endpoint        string `mapstructure:"endpoint"`
-	AccessKeyID     string `mapstructure:"access_key_id"`
-	SecretAccessKey string `mapstructure:"secret_access_key"`
-	UseSSL          bool   `mapstructure:"use_ssl"`
-	Region          string `mapstructure:"region"`
+	// MinIO 服务器地址
+	Endpoint string `mapstructure:"endpoint"`
+	// MinIO 访问密钥
+	AccessKey string `mapstructure:"access_key"`
+	// MinIO 访问密钥
+	SecretKey string `mapstructure:"secret_key"`
+	// MinIO 是否使用 SSL
+	UseSSL bool `mapstructure:"use_ssl"`
+	// MinIO 区域,表示存储桶的地理位置
+	Region string `mapstructure:"region"`
 }
 
 // MessageQueueConfig 消息队列配置
 type MessageQueueConfig struct {
-	URL              string        `mapstructure:"url"`
-	ReconnectDelay   time.Duration `mapstructure:"reconnect_delay"`
-	Heartbeat        time.Duration `mapstructure:"heartbeat"`
-	ConnectionNumber int           `mapstructure:"connection_number"`
+	// RabbitMQ 服务器地址
+	URL string `mapstructure:"url"`
+	// 重连延迟时间
+	ReconnectDelay time.Duration `mapstructure:"reconnect_delay"`
+	// 心跳时间
+	Heartbeat time.Duration `mapstructure:"heartbeat"`
+	// 连接名称
+	ConnectionName string `mapstructure:"connection_name"`
+	// 连接数量
+	ConnectionNumber int `mapstructure:"connection_number"`
 }
 
 // ServerConfig HTTP Server configuration

@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"detect-executor-go/pkg/config"
 	"fmt"
 
 	"github.com/go-resty/resty/v2"
@@ -26,10 +27,10 @@ type HttpResponse struct {
 // httpClient HTTP客户端实现
 type httpClient struct {
 	client *resty.Client
-	config ClientConfig
+	config config.HTTPClientConfig
 }
 
-func NewHTTPClient(config ClientConfig) HttpClient {
+func NewHTTPClient(config config.HTTPClientConfig) HttpClient {
 	//resty 是一个基于 Go 语言的 HTTP 客户端库，提供了丰富的功能和灵活的配置选项
 	client := *resty.New()
 

@@ -23,8 +23,6 @@ type DetectTask struct {
 	StartTime *time.Time `json:"start_time"`
 	EndTime   *time.Time `json:"end_time"`
 	Duration  int        `json:"duration"`
-	//json.RawMessage 表示该字段是json格式的字符串
-	Parameters map[string]interface{} `json:"parameters"`
 
 	Description string `json:"description"`
 

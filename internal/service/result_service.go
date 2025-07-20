@@ -11,7 +11,7 @@ type ResultService interface {
 	BaseService
 	GetResult(ctx context.Context, resultID string) (*model.DetectResult, error)
 	GetResultByTaskId(ctx context.Context, taskID string) (*model.DetectResult, error)
-	ListResults(ctx context.Context, req *ListResultRequest) ([]model.DetectResult, error)
+	ListResults(ctx context.Context, req *ListResultRequest) ([]model.DetectResult, int64, error)
 	DeleteResult(ctx context.Context, resultID string) error
 }
 
@@ -85,13 +85,13 @@ func (s *resultService) GetResultByTaskId(ctx context.Context, taskID string) (*
 }
 
 // ListResults
-func (s *resultService) ListResults(ctx context.Context, req *ListResultRequest) ([]model.DetectResult, error) {
+func (s *resultService) ListResults(ctx context.Context, req *ListResultRequest) ([]model.DetectResult, int64, error) {
 
 	results, err := s.ctx.Repository.Result.List(ctx, req.DeviceID, req.Type, req.Page, req.PageSize)
 	if err != nil {
-		return nil, fmt.Errorf("list results failed: %w", err)
+		return nil, 0, fmt.Errorf("list results failed: %w", err)
 	}
-	return results, nil
+	return results, 0, nil
 }
 
 // DeleteResult

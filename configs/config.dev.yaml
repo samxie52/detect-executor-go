@@ -1,0 +1,67 @@
+server:
+  host: "0.0.0.0"
+  port: 8080
+  mode: "debug"
+  read_timeout: 60
+  write_timeout: 60
+  idle_timeout: 60
+
+database:
+  host: "192.168.5.16"
+  port: 3306
+  username: "root"
+  password: "root123"
+  database: "detect_executor"
+  charset: "utf8mb4"
+  max_open_conns: 100
+  max_idle_conns: 10
+  conn_max_lifetime: 3600
+
+redis:
+  host: "192.168.5.16"
+  port: 6379
+  password: ""
+  db: 0
+  pool_size: 10
+  min_idle_conns: 5
+  dial_timeout: 5
+  read_timeout: 3
+  write_timeout: 3
+
+logger:
+  level: "debug"
+  format: "json"
+  output: "stdout"
+  file_path: "logs/app.log"
+  max_size: 100
+  max_backups: 5
+  max_age: 30
+  compress: true
+
+client:
+  http:
+    timeout: 30
+    retry_count: 3
+    retry_interval: 1
+    max_idle_conns: 100
+    max_conns_per_host: 10
+  
+  detect_engine:
+    base_url: "http://localhost:9000"
+    api_key: "your-api-key"
+    client:
+      timeout: 30
+  
+  storage:
+    endpoint: "localhost:9000"
+    access_key: "minioadmin"
+    secret_key: "minioadmin"
+    use_ssl: false
+    region: "us-east-1"
+  
+  message_queue:
+    url: "amqp://guest:guest@localhost:5672/"
+    reconnect_delay: 5
+    heartbeat: 10
+    connection_name: "detect-executor"
+    connection_number: 1

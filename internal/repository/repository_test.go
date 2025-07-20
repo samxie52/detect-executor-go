@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"detect-executor-go/internal/model"
+	"detect-executor-go/pkg/config"
 	"detect-executor-go/pkg/database"
 	"strings"
 	"testing"
@@ -20,21 +21,18 @@ type RepositoryTestSuite struct {
 }
 
 func (suite *RepositoryTestSuite) SetupSuite() {
-	dbManager, err := database.NewManager(&database.Config{
-		MySQL: &database.MySQLConfig{
-			Host:     "192.168.5.16",
-			Port:     3306,
-			Username: "root",
-			Password: "root123",
-			Database: "test",
-			Charset:  "utf8mb4",
-		},
-		Redis: &database.RedisConfig{
-			Host:     "192.168.5.16",
-			Port:     6379,
-			Password: "",
-			Database: 0,
-		},
+	dbManager, err := database.NewManager(&config.DatabaseConfig{
+		Host:     "192.168.5.16",
+		Port:     3306,
+		Username: "root",
+		Password: "root123",
+		Database: "test",
+		Charset:  "utf8mb4",
+	}, &config.RedisConfig{
+		Host:     "192.168.5.16",
+		Port:     6379,
+		Password: "",
+		DB:       0,
 	}, nil)
 
 	suite.Require().NoError(err)

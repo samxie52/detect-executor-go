@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"detect-executor-go/pkg/config"
 	"detect-executor-go/pkg/logger"
 	"fmt"
 	"sync"
@@ -28,19 +29,14 @@ type Manager struct {
 	mu *sync.RWMutex
 }
 
-type Config struct {
-	MySQL *MySQLConfig `yaml:"mysql"`
-	Redis *RedisConfig `yaml:"redis"`
-}
-
-func NewManager(config *Config, log *logger.Logger) (*Manager, error) {
+func NewManager(mysqlConfig *config.DatabaseConfig, redisConfig *config.RedisConfig, log *logger.Logger) (*Manager, error) {
 	manager := &Manager{
 		logger: log,
 	}
 
 	// init mysql
-	if config.MySQL != nil {
-		mysqlClient, err := NewMySQLClient(config.MySQL)
+	if mysqlConfig != nil {
+		mysqlClient, err := NewMySQLClient(mysqlConfig)
 		if err != nil {
 			return nil, fmt.Errorf("failed to initialize MySQL: %w ", err)
 		}
@@ -51,8 +47,8 @@ func NewManager(config *Config, log *logger.Logger) (*Manager, error) {
 	}
 
 	// initialize Redis
-	if config.Redis != nil {
-		redisClient, err := NewRedisClient(config.Redis)
+	if redisConfig != nil {
+		redisClient, err := NewRedisClient(redisConfig)
 		if err != nil {
 			return nil, fmt.Errorf("failed to initialize Redis: %w ", err)
 		}

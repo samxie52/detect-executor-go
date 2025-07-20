@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -9,7 +10,12 @@ import (
 	"syscall"
 	"time"
 
+	"detect-executor-go/internal/handler"
+	"detect-executor-go/internal/repository"
+	"detect-executor-go/internal/service"
+	"detect-executor-go/pkg/client"
 	"detect-executor-go/pkg/config"
+	"detect-executor-go/pkg/database"
 	"detect-executor-go/pkg/logger"
 
 	"github.com/gin-gonic/gin"
@@ -45,60 +51,86 @@ func main() {
 
 	log.Info("Starting detect executor server...")
 
-	//set gin mode
-	if cfg.Server.Mode == "release" {
-		//release mode is production mode that gin will not print debug info
-		gin.SetMode(gin.ReleaseMode)
+	//将cfg转换为json格式
+	jsonCfg, err := json.Marshal(cfg)
+	if err != nil {
+		log.Error("failed to marshal config: ", err)
+		os.Exit(1)
+	}
+	log.Info("config>>>>>>>>>>>> ", string(jsonCfg))
+
+	dbManager, err := database.NewManager(&cfg.Database, &cfg.Redis, log)
+	if err != nil {
+		log.Error("failed to init database: ", err)
+		log.Warn("continuing without database connection...")
+	}
+	if dbManager != nil {
+		defer dbManager.Close()
+	}
+
+	var repoManage *repository.Manager
+	if dbManager != nil {
+		repoManage = repository.NewManager(dbManager.MySQL.DB, dbManager.Redis.Client)
+		log.Info("repoManage init success")
 	} else {
-		//debug mode is development mode that gin will print debug info
-		gin.SetMode(gin.DebugMode)
+		log.Warn("running without database - some features may not work")
 	}
 
-	//create gin router
-	router := gin.New()
-
-	//use logger middleware
-	router.Use(logger.GinLogger(log))
-	//use recovery middleware
-	router.Use(logger.GinRecovery(log))
-	//use request id middleware
-	router.Use(logger.RequestID())
-
-	// setup routes
-	setupRoutes(router, log)
-
-	// create http server
-	srv := &http.Server{
-		Addr:         cfg.Server.GetAddr(),
-		Handler:      router,
-		ReadTimeout:  time.Duration(cfg.Server.ReadTimeout) * time.Second,
-		WriteTimeout: time.Duration(cfg.Server.WriteTimeout) * time.Second,
-		IdleTimeout:  time.Duration(cfg.Server.IdleTimeout) * time.Second,
+	clientManager, err := client.NewManager(&client.Config{
+		HTTP:         cfg.Client.HTTP,
+		DetectEngine: cfg.Client.DetectEngine,
+		Storage:      cfg.Client.Storage,
+		MessageQueue: cfg.Client.MessageQueue,
+	})
+	if err != nil {
+		log.Error("failed to init client manager: ", err)
 	}
 
-	//run http server
+	log.Info("clientManager init success")
+	defer clientManager.Close()
+
+	var serviceManager *service.Manager
+	if repoManage != nil {
+		serviceManager, err = service.NewManager(log, repoManage, clientManager)
+		if err != nil {
+			log.Error("failed to init service manager: ", err)
+			os.Exit(1)
+		}
+		log.Info("serviceManager init success")
+		defer serviceManager.Close()
+	} else {
+		log.Warn("running without service manager - API endpoints will return errors")
+	}
+
+	router := handler.NewRouter(log, serviceManager)
+
+	server := &http.Server{
+		Addr:    cfg.Server.GetAddr(),
+		Handler: router.GetEngine(),
+	}
+
 	go func() {
-		log.WithField("addr", cfg.Server.GetAddr()).Info("Starting http server...")
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.WithField("error", err).Error("http server error")
+
+		log.Info("Starting http server...", map[string]interface{}{
+			"addr": cfg.Server.GetAddr(),
+		})
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Error("http server error: ", err)
 		}
 	}()
 
-	// wait for interrupt signal and shutdown server gracefully
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-
 	log.Info("Shutting down server...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	if err := srv.Shutdown(ctx); err != nil {
-		log.WithField("error", err).Error("http server shutdown error")
-	} else {
-		log.Info("Server exited")
+	if err := server.Shutdown(ctx); err != nil {
+		log.Error("http server shutdown error: ", err)
 	}
+	log.Info("Server exited")
 
 }
 

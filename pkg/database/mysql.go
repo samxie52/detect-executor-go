@@ -2,32 +2,20 @@ package database
 
 import (
 	"fmt"
-	"time"
+
+	"detect-executor-go/pkg/config"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
-type MySQLConfig struct {
-	Host            string        `yaml:"host"`
-	Port            int           `yaml:"port"`
-	Username        string        `yaml:"username"`
-	Password        string        `yaml:"password"`
-	Database        string        `yaml:"database"`
-	Charset         string        `yaml:"charset"`
-	MaxOpenConns    int           `yaml:"max_open_conns"`
-	MaxIdleConns    int           `yaml:"max_idle_conns"`
-	ConnMaxLifetime time.Duration `yaml:"conn_max_lifetime"`
-	ConnMaxIdleTime time.Duration `yaml:"conn_max_idle_time"`
-}
-
 type MySQLClient struct {
 	DB     *gorm.DB
-	config *MySQLConfig
+	config *config.DatabaseConfig
 }
 
-func NewMySQLClient(config *MySQLConfig) (*MySQLClient, error) {
+func NewMySQLClient(config *config.DatabaseConfig) (*MySQLClient, error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local",
 		config.Username,
 		config.Password,
@@ -57,7 +45,6 @@ func NewMySQLClient(config *MySQLConfig) (*MySQLClient, error) {
 	sqlDB.SetMaxOpenConns(config.MaxOpenConns)
 	sqlDB.SetMaxIdleConns(config.MaxIdleConns)
 	sqlDB.SetConnMaxLifetime(config.ConnMaxLifetime)
-	sqlDB.SetConnMaxIdleTime(config.ConnMaxIdleTime)
 
 	return &MySQLClient{
 		DB:     db,

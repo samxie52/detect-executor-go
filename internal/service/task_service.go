@@ -14,7 +14,7 @@ type TaskService interface {
 
 	CreateTask(ctx context.Context, req *CreateTaskRequest) (*model.DetectTask, error)
 	GetTask(ctx context.Context, taskID string) (*model.DetectTask, error)
-	ListTasks(ctx context.Context, req *model.TaskListRequest) ([]model.DetectTask, error)
+	ListTasks(ctx context.Context, req *model.TaskListRequest) ([]model.DetectTask, int64, error)
 	UpdateTaskStatus(ctx context.Context, taskID string, status model.TaskStatus, message string) error
 	CancelTask(ctx context.Context, taskID string) error
 	RetryTask(ctx context.Context, taskID string) error
@@ -61,7 +61,6 @@ func (s *taskService) CreateTask(ctx context.Context, req *CreateTaskRequest) (*
 		StartTime:   req.StartTime,
 		EndTime:     req.EndTime,
 		Priority:    req.Priority,
-		Parameters:  req.Parameters,
 		Description: req.Description,
 	}
 
@@ -77,7 +76,6 @@ func (s *taskService) CreateTask(ctx context.Context, req *CreateTaskRequest) (*
 		"start_time":  task.StartTime,
 		"end_time":    task.EndTime,
 		"priority":    task.Priority,
-		"parameters":  task.Parameters,
 		"description": task.Description,
 	}).Info("create task success")
 
@@ -88,13 +86,13 @@ func (s *taskService) GetTask(ctx context.Context, taskID string) (*model.Detect
 	return s.ctx.Repository.Task.GetByTaskID(ctx, taskID)
 }
 
-func (s *taskService) ListTasks(ctx context.Context, req *model.TaskListRequest) ([]model.DetectTask, error) {
+func (s *taskService) ListTasks(ctx context.Context, req *model.TaskListRequest) ([]model.DetectTask, int64, error) {
 
 	tasks, err := s.ctx.Repository.Task.List(ctx, req)
 	if err != nil {
-		return nil, fmt.Errorf("list tasks failed: %w", err)
+		return nil, 0, fmt.Errorf("list tasks failed: %w", err)
 	}
-	return tasks, nil
+	return tasks, 0, nil
 }
 
 func (s *taskService) UpdateTaskStatus(ctx context.Context, taskID string, status model.TaskStatus, message string) error {
@@ -162,12 +160,11 @@ func (s *taskService) RetryTask(ctx context.Context, taskID string) error {
 
 func (s *taskService) SubmitTaskToEngine(ctx context.Context, task *model.DetectTask) error {
 	engineTask := &client.DetectTaskRequest{
-		TaskID:     task.TaskID,
-		Type:       task.Type,
-		VideoURL:   task.VideoURL,
-		StartTime:  task.StartTime,
-		EndTime:    task.EndTime,
-		Parameters: task.Parameters,
+		TaskID:    task.TaskID,
+		Type:      task.Type,
+		VideoURL:  task.VideoURL,
+		StartTime: task.StartTime,
+		EndTime:   task.EndTime,
 	}
 
 	_, err := s.ctx.Client.DetectEngine.SubmitTask(ctx, engineTask)

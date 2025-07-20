@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"detect-executor-go/pkg/config"
 	"fmt"
 	"io"
 	"time"
@@ -28,28 +29,14 @@ type FileInfo struct {
 	ContentType  string
 }
 
-// StorageConfig 存储客户端配置
-type StorageConfig struct {
-	// MinIO 服务器地址
-	Endpoint string
-	// MinIO 访问密钥
-	AccessKey string
-	// MinIO 访问密钥
-	SecretKey string
-	// MinIO 是否使用 SSL
-	UseSSL bool
-	// MinIO 区域,表示存储桶的地理位置
-	Region string
-}
-
 // storageClient 存储客户端实现
 type storageClient struct {
 	client *minio.Client
-	config StorageConfig
+	config config.StorageConfig
 }
 
 // NewStorageClient 创建存储客户端
-func NewStorageClient(config StorageConfig) (StorageClient, error) {
+func NewStorageClient(config config.StorageConfig) (StorageClient, error) {
 	client, err := minio.New(config.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(config.AccessKey, config.SecretKey, ""),
 		Secure: config.UseSSL,
