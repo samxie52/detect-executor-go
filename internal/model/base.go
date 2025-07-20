@@ -27,6 +27,8 @@ type BaseModel struct {
 type TaskStatus string
 
 const (
+	TaskStatusStarting  TaskStatus = "starting"  //开始
+	TaskStatusStopping  TaskStatus = "stopping"  //停止
 	TaskStatusPending   TaskStatus = "pending"   //待处理
 	TaskStatusRunning   TaskStatus = "running"   //处理中
 	TaskStatusCompleted TaskStatus = "completed" //完成

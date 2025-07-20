@@ -1,7 +1,6 @@
 package model
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/google/uuid"
@@ -25,7 +24,9 @@ type DetectTask struct {
 	EndTime   *time.Time `json:"end_time"`
 	Duration  int        `json:"duration"`
 	//json.RawMessage 表示该字段是json格式的字符串
-	Parameters json.RawMessage `json:"parameters"`
+	Parameters map[string]interface{} `json:"parameters"`
+
+	Description string `json:"description"`
 
 	WorkerID string     `gorm:"size:64" json:"worker_id"`
 	StartAt  *time.Time `json:"start_at"`

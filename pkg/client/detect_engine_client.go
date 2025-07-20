@@ -5,6 +5,7 @@ import (
 	"detect-executor-go/internal/model"
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
 // DetectEngineClient 检测引擎客户端接口
@@ -21,8 +22,8 @@ type DetectTaskRequest struct {
 	TaskID     string                 `json:"task_id"`
 	Type       model.DetectType       `json:"type"`
 	VideoURL   string                 `json:"video_url"`
-	StartTime  string                 `json:"start_time"`
-	EndTime    string                 `json:"end_time"`
+	StartTime  *time.Time             `json:"start_time"`
+	EndTime    *time.Time             `json:"end_time"`
 	Parameters map[string]interface{} `json:"parameters"`
 }
 
@@ -43,13 +44,13 @@ type DetectTaskStatus struct {
 
 // DetectTaskResult 检测任务结果
 type DetectTaskResult struct {
-	TaskID     string                 `json:"task_id"`
-	Status     string                 `json:"status"`
-	Score      float64                `json:"score"`
-	Passed     bool                   `json:"passed"`
-	Confidence float64                `json:"confidence"`
-	Details    map[string]interface{} `json:"details"`
-	ReportURL  string                 `json:"report_url"`
+	TaskID     string          `json:"task_id"`
+	Status     string          `json:"status"`
+	Score      float64         `json:"score"`
+	Passed     bool            `json:"passed"`
+	Confidence float64         `json:"confidence"`
+	Details    json.RawMessage `json:"details"`
+	ReportURL  string          `json:"report_url"`
 }
 
 // detectEngineClient 检测引擎客户端实现

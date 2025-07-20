@@ -16,6 +16,7 @@ type ResultRepository interface {
 	GetByResultID(ctx context.Context, resultID string) (*model.DetectResult, error)
 	Update(ctx context.Context, result *model.DetectResult) error
 	Delete(ctx context.Context, id uint) error
+	DeleteByResultID(ctx context.Context, resultID string) error
 
 	GetByTaskID(ctx context.Context, taskID string) (*model.DetectResult, error)
 	GetByDeviceID(ctx context.Context, deviceID string) (*model.DetectResult, error)
@@ -67,6 +68,10 @@ func (r *resultRepository) Delete(ctx context.Context, id uint) error {
 	return r.GetDb().WithContext(ctx).Delete(&model.DetectResult{}, id).Error
 }
 
+func (r *resultRepository) DeleteByResultID(ctx context.Context, resultID string) error {
+	return r.GetDb().WithContext(ctx).Where("result_id = ?", resultID).Delete(&model.DetectResult{}).Error
+}
+
 func (r *resultRepository) GetByTaskID(ctx context.Context, taskID string) (*model.DetectResult, error) {
 	var result model.DetectResult
 	err := r.GetDb().WithContext(ctx).Where("task_id = ?", taskID).First(&result).Error
@@ -88,6 +93,7 @@ func (r *resultRepository) GetByDeviceID(ctx context.Context, deviceID string) (
 func (r *resultRepository) List(ctx context.Context, deviceID string, detectType model.DetectType, page int, size int) ([]model.DetectResult, error) {
 	var results []model.DetectResult
 	offset := (page - 1) * size
+	//offset 是从第几条开始, limit 是每页的条数
 	query := r.GetDb().WithContext(ctx).Offset(offset).Limit(size)
 	if deviceID != "" {
 		query = query.Where("device_id = ?", deviceID)

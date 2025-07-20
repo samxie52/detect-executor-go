@@ -27,6 +27,9 @@ type DetectResult struct {
 	ProcessTime int   `json:"process_time"` //处理时间(毫秒)
 	FileSize    int64 `json:"file_size"`    //文件大小(字节)
 
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+
 	//外键关联 foreignKey:TaskID 表示外键是 TaskID references:TaskID 表示引用的表是 TaskID
 	//json:"task,omitempty" 表示在序列化时，如果 Task 为空，不序列化
 	// 临时移除外键约束以避免表创建顺序问题

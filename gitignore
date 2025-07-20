@@ -16,6 +16,8 @@
 # 依赖目录
 /vendor/
 
+/docs/mock-creation-guide.md
+
 # Go workspace file
 go.work
 
